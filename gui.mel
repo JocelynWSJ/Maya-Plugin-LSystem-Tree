@@ -1,0 +1,86 @@
+//------------------------------------------------------------
+// Creates the main window LSystem menu
+//------------------------------------------------------------
+global proc createLSystemInstance()
+{
+    print "createLSystemInstance";
+    
+    if (`menu -exists LSystemMenu`)
+        deleteUI LSystemMenu;
+    if (!`menu -exists LSystemMenu`)
+    {
+        global string $gMainWindow;
+        setParent $gMainWindow;
+        menu -label "LSystemInstance" LSystemMenu;
+            menuItem -label "Create RandomNode Network" -command createRandomNodeNetwork;
+
+            menuItem -label "Create RandomNode Retwork with Selected Object" -command createRandomNodeNetworkObject;
+
+            menuItem -label "Create LSystemInstanceNode Network" -command createLSystemInstanceNode;
+
+            menuItem -label "Create LSystemInstanceNode Network with Selected Object" -command createLSystemInstanceNodeObject;
+
+            menuItem -divider true;
+    }
+}
+
+global proc createRandomNodeNetwork()
+{
+    print "createRandomNodeNetwork";
+
+    polySphere;
+    instancer;
+    createNode randomNode;
+    connectAttr pSphere1.matrix instancer1.inputHierarchy[0]; 
+    connectAttr randomNode1.outPoints instancer1.inputPoints; 
+}
+
+global proc createRandomNodeNetworkObject()
+{
+    print "createRandomNodeNetworkObject";
+
+    instancer;
+    string $obj[]= `ls -sl`;
+    createNode randomNode;
+    connectAttr ($obj[0]+".matrix") instancer1.inputHierarchy[0]; 
+    connectAttr randomNode1.outPoints instancer1.inputPoints; 
+}
+
+global proc createLSystemInstanceNode()
+{
+    print "createLSystemInstanceNode";
+
+    polyCube;
+    polySphere;
+    instancer;
+    instancer;
+    createNode LSystemInstanceNode;
+
+    connectAttr pCube1.matrix instancer1.inputHierarchy[0];
+    connectAttr pSphere1.matrix instancer2.inputHierarchy[0];
+    connectAttr LSystemInstanceNode1.outputBranches instancer1.inputPoints;
+    connectAttr LSystemInstanceNode1.outputFlowers instancer2.inputPoints;
+}
+
+global proc createLSystemInstanceNodeObject()
+{
+    print "createLSystemInstanceNodeObject";
+
+    instancer;
+    instancer;
+    createNode LSystemInstanceNode;
+    string $obj[]= `ls -sl`;
+
+    connectAttr ($obj[0]+".matrix") instancer1.inputHierarchy[0];
+    connectAttr ($obj[1]+".matrix") instancer2.inputHierarchy[0];
+    connectAttr LSystemInstanceNode1.outputBranches instancer1.inputPoints;
+    connectAttr LSystemInstanceNode1.outputFlowers instancer2.inputPoints;
+}
+
+//------------------------------------------------------------
+// Deletes the GUI dialog
+//------------------------------------------------------------
+global proc deleteLSystemInstance()
+{
+    print "deleteLSystemUI";
+}
